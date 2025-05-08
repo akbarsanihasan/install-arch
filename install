@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+clear
+set -euo pipefail
+
+source "./lib/log.sh"
+source "./lib/helpers.sh"
+source "./lib/prompt.sh"
+
+source "./menu.sh"
+source "./mirror.sh"
+source "./format_partition.sh"
+source "./base_system.sh"
+source "./locale.sh"
+source "./network.sh"
+source "./adduser.sh"
+source "./pacman.sh"
+source "./swap.sh"
+source "./disk.sh"
+source "./bootloader.sh"
+source "./hibernation.sh"
+
+CPU_VENDOR=$(lscpu | grep "^Vendor ID" | awk '{print $3}')
+
+export CPU_VENDOR
+export ROOT_MOUNTPOINT="/mnt"
+export ESP_MOUNTPOINT="$ROOT_MOUNTPOINT/boot"
+
+timezone
+hostname
+root_password
+username
+user_password
+kernel
+swap_method
+if [[ "$SWAP_METHOD" -eq "1" ]]; then
+	bootloader
+fi
+efi_partition
+root_partition
+swap
+summary
+
+if ! [[ "$CONFIRM_INSTALL" =~ [Yy] ]]; then
+	clear
+	print_color "$GREEN" "Good bye.\n"
+	exit 1
+fi
+
+clear
+setting_mirror
+format_partition
+base_system
+setting_locale
+setting_network
+adduser
+setting_pacman
+setting_swap
+setting_storage
+install_bootloader
+# setting_hibernation
+
+# arch-chroot "${ROOT_MOUNTPOINT}" mkinitcpio -P
+setting_storage
+
+umount -Rqlf /mnt
+
+clear
+success "Installing arch"

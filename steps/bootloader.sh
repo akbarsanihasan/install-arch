@@ -38,6 +38,8 @@ grub() {
 
 	grub-install --target=x86_64-efi --efi-directory="$ESP_MOUNTPOINT" --boot-directory="$ESP_MOUNTPOINT" --bootloader-id=Archlinux
 
+	# TODO
+	# Check if new options are already in the option
 	local new_options='splash'
 
 	sed -i 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=5/' "$ROOT_MOUNTPOINT"/etc/default/grub

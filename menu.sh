@@ -16,6 +16,8 @@ export SWAP_PARTITION=""
 export CONFIRM_INSTALL=""
 
 timezone() {
+	# TODO
+	# Add validation
 	info "Timezone format are Continent/City"
 	info "e.g., Asia/Jakarta"
 	info "Default, $TIMEZONE"

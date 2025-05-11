@@ -42,7 +42,7 @@ grub() {
 
 	sed -i 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=5/' "$ROOT_MOUNTPOINT"/etc/default/grub
 	sed -i 's/^#GRUB_DISABLE_OS_PROBER=/GRUB_DISABLE_OS_PROBER=/' "$ROOT_MOUNTPOINT"/etc/default/grub
-	sed -i "s/^GRUB_CMDLINE_LINUX_DEFAULT=\"\([^\"]*\)\".*/GRUB_CMDLINE_LINUX_DEFAULT=\"\1/$new_options" "$ROOT_MOUNTPOINT"/etc/default/grub
+	sed -i "s/^GRUB_CMDLINE_LINUX_DEFAULT=\"\([^\"]*\)\".*/GRUB_CMDLINE_LINUX_DEFAULT=\"\1 $new_options/" "$ROOT_MOUNTPOINT"/etc/default/grub
 
 	arch-chroot "$ROOT_MOUNTPOINT" grub-mkconfig -o /boot/grub/grub.cfg
 

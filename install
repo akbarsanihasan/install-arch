@@ -64,7 +64,6 @@ setting_network
 adduser
 setting_pacman
 setting_swap
-setting_storage
 install_bootloader
 gen_fstab
 

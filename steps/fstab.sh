@@ -13,6 +13,8 @@ fstab_gen() {
 	local uid=$(arch-chroot "$ROOT_MOUNTPOINT" id -u "$USERNAME")
 	local gid=$(arch-chroot "$ROOT_MOUNTPOINT" id -g "$USERNAME")
 
+	local MIN_SIZE_GB=8
+
 	echo -e "# <file system> <dir> <type> <options> <dump> <pass>" | tee "$ROOT_MOUNTPOINT"/etc/fstab &>/dev/null
 	echo -e "UUID=$esp_uuid     ${ESP_MOUNTPOINT#${ROOT_MOUNTPOINT}}       $esp_type      umask=0077      0       1" | tee -a "$ROOT_MOUNTPOINT"/etc/fstab &>/dev/null
 	echo -e "UUID=$root_uuid     /     $root_type        errors=remount-ro      0       1" | tee -a "$ROOT_MOUNTPOINT"/etc/fstab &>/dev/null
@@ -24,6 +26,16 @@ fstab_gen() {
 		local mountpoint="/media/$label"
 		if [[ -z $label ]]; then
 			mountpoint="/media/$uuid"
+		fi
+		local size_bytes=$(df -BG --output=size "$disk" | tail -n 1 | tr -d 'G')
+		local size_gb=$((size_bytes / 1024 / 1024 / 1024))
+
+		if [[ $(lsblk -dno RM "$disk") -eq 1 ]]; then
+			continue
+		fi
+
+		if [ "$size_gb" -lt "$MIN_SIZE_GB" ]; then
+			continue
 		fi
 
 		if [[ -z $type ]]; then

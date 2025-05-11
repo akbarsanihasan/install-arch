@@ -1,6 +1,6 @@
 adduser() {
 	clear
-	print_color "$MAGENTA" "Adding user...\n"
+	info "Adding user...\n"
 
 	useradd -mG wheel -R "$ROOT_MOUNTPOINT" "$USERNAME"
 

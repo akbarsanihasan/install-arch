@@ -1,6 +1,6 @@
 setting_mirror() {
 	echo -e
-	print_color "$MAGENTA" "Configuring pacman and reflector... \n"
+	info "Configuring pacman and reflector"
 
 	if [[ ! -e /etc/pacman.d/mirrorlist.bak ]]; then
 		cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak

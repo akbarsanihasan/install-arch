@@ -27,7 +27,7 @@ checkmount() {
 
 format_partition() {
 	clear
-	print_color "$MAGENTA" "Formatting selected partition...\n"
+	info "Formatting selected partition"
 
 	if check_swap; then
 		if ! checkmount "$ROOT_PARTITION" "$ROOT_MOUNTPOINT"; then

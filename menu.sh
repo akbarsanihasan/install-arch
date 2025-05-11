@@ -1,35 +1,39 @@
-export TIMEZONE=""
+export TIMEZONE="Asia/Jakarta"
 
-export HOST_NAME=""
+export HOST_NAME=$(hostnamectl | awk '/Hardware Model/{print $3}')
 export USERNAME=""
 export ROOT_PASSWORD=""
 export USER_PASSWORD=""
+export KERNEL="1"
+export BOOTLOADER="1"
 
 export EFI_PARTITION=""
 export ROOT_PARTITION=""
 
-export SWAP_METHOD=""
+export SWAP_METHOD="0"
 export SWAP_PARTITION=""
-export HIBERNATION=""
-
-export KERNEL=""
-export BOOTLOADER="1"
 
 export CONFIRM_INSTALL=""
 
 timezone() {
-	echo "Select your timezone: "
-	TIMEZONE=$(tzselect -n 10)
+	info "Timezone format are Continent/City"
+	info "e.g., Asia/Jakarta"
+	info "Default, $TIMEZONE"
+	local timezone=$(input "Enter yur timezone")
+
+	if [[ -n "$timezone" ]]; then
+		TIMEZONE=$timezone
+	fi
+
 	clear
 }
 
 hostname() {
-	local default_hostname=$(hostnamectl | awk '/Hardware Model/{print $3}')
-	info "Default hostname would be: $default_hostname"
-	HOST_NAME=$(input "Enter your hostname")
+	info "Default, $HOST_NAME"
+	local host_name=$(input "Enter your hostname")
 
-	if [[ -z "$HOST_NAME" ]]; then
-		HOST_NAME=$default_hostname
+	if [[ -n "$host_name" ]]; then
+		HOST_NAME=$host_name
 	fi
 
 	clear
@@ -41,18 +45,21 @@ username() {
 }
 
 root_password() {
-	info "Leave it empty to disable"
+	info "Empty password will disable root user"
 	ROOT_PASSWORD=$(input_silent "Enter your Root password")
 
-	if [[ -n "$ROOT_PASSWORD" ]]; then
-		echo -e
-		ROOT_PASSWORD_VERIFY=$(input_silent "Verify your root password")
+	if [[ -z "$ROOT_PASSWORD" ]]; then
+		clear
+		return 0
+	fi
 
-		if [[ "$ROOT_PASSWORD" != "$ROOT_PASSWORD_VERIFY" ]]; then
-			clear
-			warn "Password doesn't match, try again"
-			root_password
-		fi
+	echo -e
+	local password_verification=$(input_silent "Verify your root password")
+
+	if [[ "$ROOT_PASSWORD" != "$password_verification" ]]; then
+		clear
+		warn "Password doesn't match, try again"
+		root_password
 	fi
 
 	clear
@@ -60,20 +67,23 @@ root_password() {
 
 user_password() {
 	info "User password cannot be empty"
-	USER_PASSWORD=$(input_silent "Enter your User password")
-	echo -e
-	USER_PASSWORD_VERIFY=$(input_silent "Verify your User password")
 
+	USER_PASSWORD=$(input_silent "Enter your User ($USERNAME) password")
 	if [[ -z "$USER_PASSWORD" ]]; then
 		clear
 		warn "Cannot be empty"
 		user_password
+		return 0
 	fi
 
-	if [[ "$USER_PASSWORD" != "$USER_PASSWORD_VERIFY" ]]; then
+	echo -e
+	password_verification=$(input_silent "Verify your User ($USERNAME) password")
+
+	if [[ "$USER_PASSWORD" != "$password_verification" ]]; then
 		clear
 		warn "Password doesn't match,"
 		user_password
+		return 0
 	fi
 
 	clear
@@ -93,7 +103,6 @@ efi_partition() {
 	if ! blkid "$partition" &>/dev/null; then
 		clear
 		error "Cannot get partition. format or check the partition"
-		echo -e
 		efi_partition
 		return 0
 	fi
@@ -130,7 +139,6 @@ root_partition() {
 	if ! blkid "$partition" &>/dev/null; then
 		clear
 		error "Cannot get partition. format or check the partition"
-		echo -e
 		root_partition
 		return 0
 	fi
@@ -138,7 +146,6 @@ root_partition() {
 	if [[ "$partition" == "$EFI_PARTITION" ]]; then
 		clear
 		error "Partition has been used for EFI"
-		echo -e
 		root_partition
 		return 0
 	fi
@@ -186,7 +193,6 @@ swap_partition() {
 	if [[ "$partition" == "$EFI_PARTITION" ]]; then
 		clear
 		error "Partition has been used for EFI"
-		echo -e
 		swap_partition
 		return 0
 	fi
@@ -194,7 +200,6 @@ swap_partition() {
 	if [[ "$partition" == "$ROOT_PARTITION" ]]; then
 		clear
 		error "Partition has been used for ROOT"
-		echo -e
 		swap_partition
 		return 0
 	fi
@@ -202,7 +207,6 @@ swap_partition() {
 	if includes_array "$partition" "${EXTRA_STORAGE[@]}"; then
 		clear
 		error "Partition has been used for extra storage"
-		echo -e
 		swap_partition
 		return 0
 	fi
@@ -210,7 +214,6 @@ swap_partition() {
 	if ! blkid "$partition" &>/dev/null && ! [[ "$partition" == '/swapfile' ]]; then
 		clear
 		error "Cannot get partition. format or check the partition"
-		echo -e
 		swap_partition
 		return 0
 	fi
@@ -243,17 +246,24 @@ swap() {
 }
 
 kernel() {
-	KERNEL=$(option_noempty "Select kernel" "Linux" "Linux-zen")
-	clear
+	info "Default, Linux"
+	local kernel="$(option "Select kernel" "Linux" "Linux-zen")"
 
-	if [[ -z "$KERNEL" ]]; then
-		kernel
-		clear
+	if [[ -n "$kernel" ]]; then
+		KERNEL=$kernel
 	fi
+
+	clear
 }
 
 bootloader() {
-	BOOTLOADER=$(option_noempty "Select the bootloader" "Grub" "Systemd-boot")
+	info "Default, grub"
+	local bootloader=$(option "Select the bootloader" "Grub" "Systemd-boot")
+
+	if [[ -n "$bootloader" ]]; then
+		BOOTLOADER=$bootloader
+	fi
+
 	clear
 }
 

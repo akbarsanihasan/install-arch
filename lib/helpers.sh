@@ -1,5 +1,5 @@
 list_disk() {
-	lsblk -o name,start,size,type,fstype
+	blkid -o list
 }
 
 get_partinfo() {

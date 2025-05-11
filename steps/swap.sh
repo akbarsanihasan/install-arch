@@ -1,38 +1,40 @@
 enable_swap() {
 	clear
-	print_color "$MAGENTA" "Configuring Swap...\n"
-
-	TOTAL_RAM=$(free -m | awk '/^Mem:/{print $2}')
-	SWAP_SIZE_DEFAULT=4096
-	SWAP_SIZE_HALF=$((TOTAL_RAM / 2))
-	SWAP_SIZE=$SWAP_SIZE_DEFAULT
+	info "Configuring Swap"
 
 	if check_swap; then
-		print_color "$YELLOW" "Swap file or partition already exists.\n"
+		warn "Swap file or partition already exists"
 		exit 0
 	fi
 
 	if [[ "$SWAP_PARTITION" == "/swapfile" ]]; then
+		local total_ram=$(free -m | awk '/^Mem:/{print $2}')
+		local swap_size_default=4096
+		local swap_size_half=$((total_ram / 2))
+		local swap_size=$swap_size_default
+
 		if [[ "$HIBERNATION" =~ [Yy] ]]; then
-			SWAP_SIZE=$TOTAL_RAM
-		elif [[ $SWAP_SIZE_HALF -lt $SWAP_SIZE_DEFAULT ]]; then
-			SWAP_SIZE=$SWAP_SIZE_HALF
+			swap_size=$total_ram
 		fi
 
-		arch-chroot "$ROOT_MOUNTPOINT" dd if=/dev/zero of=/swapfile bs=1M count="$SWAP_SIZE" status=progress
+		if [[ $swap_size_half -lt $swap_size_default ]]; then
+			swap_size=$swap_size_half
+		fi
+
+		arch-chroot "$ROOT_MOUNTPOINT" dd if=/dev/zero of=/swapfile bs=1M count="$swap_size" status=progress
 		arch-chroot "$ROOT_MOUNTPOINT" chmod 600 "$SWAP_PARTITION"
 	fi
 
 	arch-chroot "$ROOT_MOUNTPOINT" mkswap "$SWAP_PARTITION" -f
 	arch-chroot "$ROOT_MOUNTPOINT" swapon "$SWAP_PARTITION"
 
-	success "Swap succesfully created\n"
+	success "Swap succesfully created"
 	sleep 3
 }
 
 enable_zram() {
 	clear
-	print_color "$MAGENTA" "Configuring zram with zram generator...\n"
+	info "Configuring zram with zram generator"
 
 	echo "[zram0]" | tee "$ROOT_MOUNTPOINT"/etc/systemd/zram-generator.conf &>/dev/null
 	echo "compression-algorithm=zstd" | tee -a "$ROOT_MOUNTPOINT"/etc/systemd/zram-generator.conf &>/dev/null
@@ -49,7 +51,7 @@ enable_zram() {
 
 setting_swap() {
 	if [[ $SWAP_METHOD == "1" ]]; then
-		enable_swap || true
+		enable_swap
 	elif [[ $SWAP_METHOD == "2" ]]; then
 		enable_zram
 	else

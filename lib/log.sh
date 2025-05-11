@@ -19,12 +19,6 @@ success() {
 	print_color "$WHITE" "${text}\n"
 }
 
-info() {
-	local text=$1
-	print_color "$BLUE" "Info: "
-	print_color "$WHITE" "${text}\n"
-}
-
 warn() {
 	local text=$1
 	print_color "$YELLOW" "Warning: "
@@ -34,5 +28,11 @@ warn() {
 error() {
 	local text=$1
 	print_color "$RED" "Error: "
+	print_color "$WHITE" "${text}\n"
+}
+
+info() {
+	local text=$1
+	print_color "$BLUE" "Info: "
 	print_color "$WHITE" "${text}\n"
 }

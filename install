@@ -7,20 +7,29 @@ source "./lib/log.sh"
 source "./lib/helpers.sh"
 source "./lib/prompt.sh"
 
-source "./menu.sh"
-source "./mirror.sh"
-source "./format_partition.sh"
-source "./base_system.sh"
-source "./locale.sh"
-source "./network.sh"
-source "./adduser.sh"
-source "./pacman.sh"
-source "./swap.sh"
-source "./disk.sh"
-source "./bootloader.sh"
-source "./hibernation.sh"
+source "./steps/menu.sh"
+source "./steps/mirror.sh"
+source "./steps/format_partition.sh"
+source "./steps/base_system.sh"
+source "./steps/locale.sh"
+source "./steps/network.sh"
+source "./steps/adduser.sh"
+source "./steps/pacman.sh"
+source "./steps/swap.sh"
+source "./steps/disk.sh"
+source "./steps/bootloader.sh"
+source "./steps/hibernation.sh"
 
-CPU_VENDOR=$(lscpu | grep "^Vendor ID" | awk '{print $3}')
+if [[ "$(id -u)" -ne 0 ]]; then
+	error "Script must run with root"
+	exit 1
+fi
+
+if ! [[ -d /sys/firmware/efi ]]; then
+	error "This script only support for EFI firmware"
+fi
+
+CPU_VENDOR=$(grep -m 1 'vendor_id' /proc/cpuinfo | awk '{print $3}')
 
 export CPU_VENDOR
 export ROOT_MOUNTPOINT="/mnt"
@@ -58,12 +67,8 @@ setting_pacman
 setting_swap
 setting_storage
 install_bootloader
-# setting_hibernation
-
-# arch-chroot "${ROOT_MOUNTPOINT}" mkinitcpio -P
 setting_storage
 
 umount -Rqlf /mnt
-
 clear
 success "Installing arch"

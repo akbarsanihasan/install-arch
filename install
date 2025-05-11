@@ -7,7 +7,7 @@ source "./lib/log.sh"
 source "./lib/helpers.sh"
 source "./lib/prompt.sh"
 
-source "./steps/menu.sh"
+source "./menu.sh"
 source "./steps/mirror.sh"
 source "./steps/format_partition.sh"
 source "./steps/base_system.sh"

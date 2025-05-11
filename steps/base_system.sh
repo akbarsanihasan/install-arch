@@ -52,7 +52,7 @@ base_system() {
 		"${pacman_util[@]}" \
 		"${bootloader[@]}"; do
 
-		((RETRY_COUNT++))
+		((retry_count++))
 
 		if ((retry_count >= MAX_RETRIES)); then
 			error "Maximum retries reached. Aborting."

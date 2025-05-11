@@ -42,7 +42,7 @@ grub() {
 
 	sed -i 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=5/' "$ROOT_MOUNTPOINT"/etc/default/grub
 	sed -i 's/^#GRUB_DISABLE_OS_PROBER=/GRUB_DISABLE_OS_PROBER=/' "$ROOT_MOUNTPOINT"/etc/default/grub
-	sed -i "s/^GRUB_CMDLINE_LINUX_DEFAULT=\"\([^\"]*\)\".*/GRUB_CMDLINE_LINUX_DEFAULT=\"\1 $new_options/" "$ROOT_MOUNTPOINT"/etc/default/grub
+	sed -i "s/^GRUB_CMDLINE_LINUX_DEFAULT=\"\([^\"]*\)\".*/GRUB_CMDLINE_LINUX_DEFAULT=\"\1 $new_options/\"" "$ROOT_MOUNTPOINT"/etc/default/grub
 
 	arch-chroot "$ROOT_MOUNTPOINT" grub-mkconfig -o /boot/grub/grub.cfg
 
@@ -61,10 +61,12 @@ systemd() {
 
 	bootctl --esp-path="$ESP_MOUNTPOINT" install
 
-	echo -e "default archlinux*" | tee "${ESP_MOUNTPOINT}/loader/loader.conf" &>/dev/null
-	echo -e "timeout 5" | tee -a "${ESP_MOUNTPOINT}/loader/loader.conf" &>/dev/null
-	echo -e "console-mode max" | tee -a "${ESP_MOUNTPOINT}/loader/loader.conf" &>/dev/null
-	echo -e "default @saved" | tee -a "${ESP_MOUNTPOINT}/loader/loader.conf" &>/dev/null
+	tee -a "${ESP_MOUNTPOINT}/loader/loader.conf" <<-EOF
+		default archlinux*
+		timeout 5
+		console-mode max
+		default @saved
+	EOF
 
 	mkdir -p "$ROOT_MOUNTPOINT"/etc/pacman.d/hooks
 	cp -r ./etc/95-systemd-boot.hook "$ROOT_MOUNTPOINT"/etc/pacman.d/hooks/95-systemd-boot.hook

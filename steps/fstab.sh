@@ -13,12 +13,24 @@ gen_fstab() {
 	local uid=$(arch-chroot "$ROOT_MOUNTPOINT" id -u "$USERNAME")
 	local gid=$(arch-chroot "$ROOT_MOUNTPOINT" id -g "$USERNAME")
 
+	local swap_id="$SWAP_PARTITION"
+
 	local MIN_SIZE_GB=8
 
 	echo -e "# <file system> <dir> <type> <options> <dump> <pass>" | tee "$ROOT_MOUNTPOINT"/etc/fstab &>/dev/null
 	echo -e "UUID=$esp_uuid     ${ESP_MOUNTPOINT#${ROOT_MOUNTPOINT}}       $esp_type      umask=0077      0       1" | tee -a "$ROOT_MOUNTPOINT"/etc/fstab &>/dev/null
 	echo -e "UUID=$root_uuid     /     $root_type        errors=remount-ro      0       1" | tee -a "$ROOT_MOUNTPOINT"/etc/fstab &>/dev/null
 
+	if ! [[ "$SWAP_PARTITION" == "/swapfile" ]]; then
+		swap_id="UUID=$(get_partition "UUID" "$ROOT_PARTITION")"
+	fi
+
+	if [[ $SWAP_METHOD == "1" ]]; then
+		echo -e "$swap_id     none        swap        defaults        0       0" |
+			tee -a "$ROOT_MOUNTPOINT"/etc/fstab &>/dev/null
+	fi
+
+	echo -e "\n# Some additional entries" | tee -a "$ROOT_MOUNTPOINT"/etc/fstab &>/dev/null
 	for disk in "${disks[@]}"; do
 		local type=$(get_partinfo "type" "$disk")
 		local uuid=$(get_partinfo "uuid" "$disk")
@@ -47,16 +59,7 @@ gen_fstab() {
 			options+="uid=$uid,gid=$gid"
 		fi
 
+		mkdir -p "$ROOT_MOUNTPOINT/$mountpoint"
 		echo -e "UUID=$uuid $mountpoint $fstype $options 0 0" | tee -a "$ROOT_MOUNTPOINT"/etc/fstab
 	done
-
-	local swap_id="$SWAP_PARTITION"
-	if ! [[ "$SWAP_PARTITION" == "/swapfile" ]]; then
-		swap_id="UUID=$(get_partition "UUID" "$ROOT_PARTITION")"
-	fi
-	if [[ $SWAP_METHOD == "1" ]]; then
-		echo -e "$swap_id     none        swap        defaults        0       0" |
-			tee -a "$ROOT_MOUNTPOINT"/etc/fstab &>/dev/null
-	fi
-
 }

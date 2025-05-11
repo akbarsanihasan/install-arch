@@ -13,10 +13,6 @@ enable_swap() {
 		local swap_size_half=$((total_ram / 2))
 		local swap_size=$swap_size_default
 
-		if [[ "$HIBERNATION" =~ [Yy] ]]; then
-			swap_size=$total_ram
-		fi
-
 		if [[ $swap_size_half -lt $swap_size_default ]]; then
 			swap_size=$swap_size_half
 		fi
@@ -52,10 +48,11 @@ enable_zram() {
 setting_swap() {
 	if [[ $SWAP_METHOD == "1" ]]; then
 		enable_swap
-	elif [[ $SWAP_METHOD == "2" ]]; then
+		return 0
+	fi
+
+	if [[ $SWAP_METHOD == "2" ]]; then
 		enable_zram
-	else
-		warn "INVALID SWAP choice, no swap configured\n"
-		warn "Cannot setting hibernation\n"
+		return 0
 	fi
 }

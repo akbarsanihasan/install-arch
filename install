@@ -16,7 +16,7 @@ source "./steps/network.sh"
 source "./steps/adduser.sh"
 source "./steps/pacman.sh"
 source "./steps/swap.sh"
-source "./steps/disk.sh"
+source "./steps/fstab.sh"
 source "./steps/bootloader.sh"
 source "./steps/hibernation.sh"
 

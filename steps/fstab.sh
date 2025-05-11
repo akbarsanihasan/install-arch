@@ -1,4 +1,4 @@
-fstab_gen() {
+gen_fstab() {
 	clear
 	info "Configuring fstab"
 

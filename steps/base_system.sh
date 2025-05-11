@@ -38,10 +38,7 @@ base_system() {
 		swap_util=(zram-generator)
 	fi
 
-	local MAX_RETRIES=5
-	local retry_count=0
-
-	until pacstrap "$ROOT_MOUNTPOINT" \
+	pacstrap "$ROOT_MOUNTPOINT" \
 		"${base[@]}" \
 		"${kernel[@]}" \
 		"${microcode[@]}" \
@@ -50,19 +47,7 @@ base_system() {
 		"${network[@]}" \
 		"${pipewire[@]}" \
 		"${pacman_util[@]}" \
-		"${bootloader[@]}"; do
-
-		((retry_count++))
-
-		if ((retry_count >= MAX_RETRIES)); then
-			error "Maximum retries reached. Aborting."
-			exit 1
-		fi
-
-		clear
-		warn "Pacstrap failed (attempt $retry_count/$MAX_RETRIES). Retrying in 5 seconds..."
-		sleep 5
-	done
+		"${bootloader[@]}"
 
 	success "Installing package to root partition"
 	sleep 3

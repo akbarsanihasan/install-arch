@@ -18,7 +18,6 @@ source "./steps/pacman.sh"
 source "./steps/swap.sh"
 source "./steps/fstab.sh"
 source "./steps/bootloader.sh"
-source "./steps/hibernation.sh"
 
 if [[ "$(id -u)" -ne 0 ]]; then
 	error "Script must run with root"

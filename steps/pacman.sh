@@ -14,9 +14,6 @@ setting_pacman() {
 	arch-chroot "$ROOT_MOUNTPOINT" sed -i '/^#Color/s/^#//' /etc/pacman.conf
 	arch-chroot "$ROOT_MOUNTPOINT" sed -i '/^#[[:space:]]*\[multilib\]/,/^#[[:space:]]*Include = \/etc\/pacman.d\/mirrorlist/s/^#//' /etc/pacman.conf
 
-	arch-chroot "$ROOT_MOUNTPOINT" cp /etc/makepkg.conf /etc/makepkg.conf.bak
-	arch-chroot "$ROOT_MOUNTPOINT" sed -i "s/^#MAKEFLAGS=\".*\"/MAKEFLAGS=\"-j\$(nproc)\"/" /etc/makepkg.conf
-
 	print_color "$GREEN" "Configuring reflector\n"
 	sleep 3
 }

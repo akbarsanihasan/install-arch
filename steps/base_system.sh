@@ -8,7 +8,12 @@ base_system() {
 	local pipewire=(pipewire wireplumber pipewire-audio pipewire-pulse pipewire-jack pipewire-alsa)
 	local pacman_util=(reflector pacman-contrib)
 	local fs_util=(ntfs-3g exfatprogs virtiofsd)
-	kernel=("${KERNEL_OPTIONS[$kernel]}")
+	kernel=("${KERNEL_OPTIONS[$KERNEL]}")
+
+	swap_util=()
+	if [[ "$SWAP_METHOD" == "2" ]]; then
+		swap_util=(zram-generator)
+	fi
 
 	bootloader=()
 	if [[ $BOOTLOADER == "1" ]]; then
@@ -24,11 +29,6 @@ base_system() {
 	fi
 	if [[ "$CPU_VENDOR" == "AuthenticAMD" ]]; then
 		microcode=(amd-ucode)
-	fi
-
-	swap_util=()
-	if [[ "$SWAP_METHOD" == "2" ]]; then
-		swap_util=(zram-generator)
 	fi
 
 	pacstrap "$ROOT_MOUNTPOINT" \

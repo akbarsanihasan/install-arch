@@ -6,9 +6,9 @@ Private_add_loader() {
 	echo "title   Archlinux" | tee "$ESP_MOUNTPOINT"/loader/entries/archlinux.conf &>/dev/null
 
 	tee -a "$ESP_MOUNTPOINT"/loader/entries/archlinux.conf <<-EOF
-		linux   /vmlinuz-${KERNEL_OPTIONS[$kernel]} 
-		initrd  /initramfs-${KERNEL_OPTIONS[$kernel]}.img
-		initrd  /initramfs-${KERNEL_OPTIONS[$kernel]}-fallback.img
+		linux   /vmlinuz-${KERNEL_OPTIONS[$KERNEL]} 
+		initrd  /initramfs-${KERNEL_OPTIONS[$KERNEL]}.img
+		initrd  /initramfs-${KERNEL_OPTIONS[$KERNEL]}-fallback.img
 	EOF
 
 	if [[ "$CPU_VENDOR" == "GenuineIntel" ]]; then

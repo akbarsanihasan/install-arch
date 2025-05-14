@@ -326,7 +326,7 @@ summary() {
 	fi
 
 	print_color "$GREEN" "Kernel: "
-	print_color "$WHITE" "${KERNEL_OPTIONS[$kernel]}"
+	print_color "$WHITE" "${KERNEL_OPTIONS[$KERNEL]}"
 	echo -e
 
 	print_color "$GREEN" "Bootloader: "

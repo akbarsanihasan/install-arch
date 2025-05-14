@@ -41,9 +41,9 @@ swap_method
 if [[ "$SWAP_METHOD" -eq "1" ]]; then
 	bootloader
 fi
-root_password
 username
 user_password
+root_password
 efi_partition
 root_partition
 swap

@@ -29,7 +29,7 @@ Private_add_loader() {
 		echo "initrd  /amd-ucode.img" | tee -a "${ESP_MOUNTPOINT}/loader/entries/archlinux.conf" &>/dev/null
 	fi
 
-	echo "options root=UUID=${root_id} rw log_level=3 quiet splash" | tee -a "${ESP_MOUNTPOINT}/loader/entries/archlinux.conf" &>/dev/null
+	echo "options root=UUID=${root_id} rw" | tee -a "${ESP_MOUNTPOINT}/loader/entries/archlinux.conf" &>/dev/null
 }
 
 grub() {
@@ -40,11 +40,11 @@ grub() {
 
 	# TODO
 	# Check if new options are already in the option
-	local new_options='splash'
+	local new_options=''
 
 	sed -i 's/^GRUB_TIMEOUT=.*$/GRUB_TIMEOUT=5/' "$ROOT_MOUNTPOINT"/etc/default/grub
 	sed -i 's/^#GRUB_DISABLE_OS_PROBER=/GRUB_DISABLE_OS_PROBER=/' "$ROOT_MOUNTPOINT"/etc/default/grub
-	sed -i "s/^GRUB_CMDLINE_LINUX_DEFAULT=\"\([^\"]*\)\".*/GRUB_CMDLINE_LINUX_DEFAULT=\"\1 $new_options\"/" "$ROOT_MOUNTPOINT"/etc/default/grub
+	sed -i "s/^GRUB_CMDLINE_LINUX_DEFAULT=\"\([^\"]*\)\".*/GRUB_CMDLINE_LINUX_DEFAULT=\"$new_options\"/" "$ROOT_MOUNTPOINT"/etc/default/grub
 
 	arch-chroot "$ROOT_MOUNTPOINT" grub-mkconfig -o /boot/grub/grub.cfg
 

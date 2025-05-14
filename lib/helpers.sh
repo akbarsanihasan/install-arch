@@ -1,5 +1,5 @@
 list_disk() {
-	blkid -o list
+	lsblk -l -p -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,UUID | column -t
 }
 
 get_partinfo() {

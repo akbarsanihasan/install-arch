@@ -249,7 +249,7 @@ swap() {
 }
 
 kernel() {
-	info "Default, Linux"
+	info "Default, ${KERNEL_OPTIONS[(($KERNEL - 1))]}"
 	local kernel="$(option "Select kernel" "${KERNEL_OPTIONS[@]}")"
 
 	if [[ -n "$kernel" ]]; then

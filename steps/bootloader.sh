@@ -5,21 +5,11 @@ Private_add_loader() {
 
 	echo "title   Archlinux" | tee "$ESP_MOUNTPOINT"/loader/entries/archlinux.conf &>/dev/null
 
-	if [[ "$KERNEL" == "1" ]]; then
-		tee -a "$ESP_MOUNTPOINT"/loader/entries/archlinux.conf <<-EOF
-			linux   /vmlinuz-linux 
-			initrd  /initramfs-linux.img
-			initrd  /initramfs-linux-fallback.img
-		EOF
-	fi
-
-	if [[ "$KERNEL" == "2" ]]; then
-		tee -a "$ESP_MOUNTPOINT"/loader/entries/archlinux.conf <<-EOF
-			linux   /vmlinuz-linux-zen 
-			initrd  /initramfs-linux-zen.img
-			initrd  /initramfs-linux-zen-fallback.img
-		EOF
-	fi
+	tee -a "$ESP_MOUNTPOINT"/loader/entries/archlinux.conf <<-EOF
+		linux   /vmlinuz-${KERNEL_OPTIONS[$kernel]} 
+		initrd  /initramfs-${KERNEL_OPTIONS[$kernel]}.img
+		initrd  /initramfs-${KERNEL_OPTIONS[$kernel]}-fallback.img
+	EOF
 
 	if [[ "$CPU_VENDOR" == "GenuineIntel" ]]; then
 		echo "initrd  /intel-ucode.img" | tee -a "${ESP_MOUNTPOINT}/loader/entries/archlinux.conf" &>/dev/null

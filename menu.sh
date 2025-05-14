@@ -4,7 +4,8 @@ export HOST_NAME=$(hostnamectl | awk '/Hardware Model/{print $3}')
 export USERNAME=""
 export ROOT_PASSWORD=""
 export USER_PASSWORD=""
-export KERNEL="1"
+export KERNEL="2"
+export KERNEL_OPTIONS=(linux linux-lts linux-zen)
 export BOOTLOADER="1"
 
 export EFI_PARTITION=""
@@ -249,7 +250,7 @@ swap() {
 
 kernel() {
 	info "Default, Linux"
-	local kernel="$(option "Select kernel" "Linux" "Linux-zen")"
+	local kernel="$(option "Select kernel" "${KERNEL_OPTIONS[@]}")"
 
 	if [[ -n "$kernel" ]]; then
 		KERNEL=$kernel
@@ -325,12 +326,7 @@ summary() {
 	fi
 
 	print_color "$GREEN" "Kernel: "
-	if [[ "$KERNEL" -eq "1" ]]; then
-		print_color "$WHITE" "Linux"
-	fi
-	if [[ "$KERNEL" -eq "2" ]]; then
-		print_color "$WHITE" "Linux zen"
-	fi
+	print_color "$WHITE" "${KERNEL_OPTIONS[$kernel]}"
 	echo -e
 
 	print_color "$GREEN" "Bootloader: "

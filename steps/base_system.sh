@@ -8,14 +8,7 @@ base_system() {
 	local pipewire=(pipewire wireplumber pipewire-audio pipewire-pulse pipewire-jack pipewire-alsa)
 	local pacman_util=(reflector pacman-contrib)
 	local fs_util=(ntfs-3g exfatprogs virtiofsd)
-
-	kernel=()
-	if [[ $KERNEL == "1" ]]; then
-		kernel=(linux linux-headers)
-	fi
-	if [[ $KERNEL == "2" ]]; then
-		kernel=(linux-zen linux-zen-headers)
-	fi
+	kernel=("${KERNEL_OPTIONS[$kernel]}")
 
 	bootloader=()
 	if [[ $BOOTLOADER == "1" ]]; then

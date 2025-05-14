@@ -67,6 +67,8 @@ setting_swap
 install_bootloader
 gen_fstab
 
+arch-chroot "$ROOT_MOUNTPOINT" mkinitcpio -P "${KERNEL_OPTIONS[$KERNEL]}"
+
 umount -Rqlf /mnt
 clear
 success "Installing arch"

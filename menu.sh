@@ -4,14 +4,14 @@ export HOST_NAME=$(hostnamectl | awk '/Hardware Model/{print $3}')
 export USERNAME=""
 export ROOT_PASSWORD=""
 export USER_PASSWORD=""
-export KERNEL="2"
+export KERNEL=2 # This is actually linux-lts since it modified in the kernel menu
 export KERNEL_OPTIONS=(linux linux-lts linux-zen)
-export BOOTLOADER="1"
+export BOOTLOADER=1
 
 export EFI_PARTITION=""
 export ROOT_PARTITION=""
 
-export SWAP_METHOD="0"
+export SWAP_METHOD=0
 export SWAP_PARTITION=""
 
 export CONFIRM_INSTALL=""
@@ -255,6 +255,8 @@ kernel() {
 	if [[ -n "$kernel" ]]; then
 		KERNEL=$kernel
 	fi
+
+	((KERNEL -= 1))
 
 	clear
 }

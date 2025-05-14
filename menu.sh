@@ -256,7 +256,9 @@ kernel() {
 		KERNEL=$kernel
 	fi
 
-	((KERNEL -= 1))
+	KERNEL=$(("$KERNEL" - 1))
+
+	echo "$KERNEL"
 
 	clear
 }

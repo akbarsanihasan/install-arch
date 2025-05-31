@@ -4,10 +4,8 @@ base_system() {
 	sleep 3
 
 	local base=(base sudo linux-firmware git vim zsh)
-	local network=(networkmanager wpa_supplicant wireless_tools netctl iptables-nft)
-	local pipewire=(pipewire wireplumber pipewire-audio pipewire-pulse pipewire-jack pipewire-alsa)
+	local network=(networkmanager wpa_supplicant wireless_tools)
 	local pacman_util=(reflector pacman-contrib)
-	local fs_util=(ntfs-3g exfatprogs virtiofsd)
 	kernel=("${KERNEL_OPTIONS[$KERNEL]}")
 
 	swap_util=()
@@ -34,13 +32,11 @@ base_system() {
 	pacstrap "$ROOT_MOUNTPOINT" \
 		"${base[@]}" \
 		"${kernel[@]}" \
-		"${microcode[@]}" \
-		"${fs_util[@]}" \
-		"${swap_util[@]}" \
 		"${network[@]}" \
-		"${pipewire[@]}" \
-		"${pacman_util[@]}" \
-		"${bootloader[@]}"
+		"${microcode[@]}" \
+		"${bootloader[@]}" \
+		"${swap_util[@]}" \
+		"${pacman_util[@]}"
 
 	success "Installing package to root partition"
 	sleep 3

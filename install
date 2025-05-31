@@ -37,10 +37,7 @@ export ESP_MOUNTPOINT="$ROOT_MOUNTPOINT/boot"
 timezone
 hostname
 kernel
-swap_method
-if [[ "$SWAP_METHOD" -eq "1" ]]; then
-	bootloader
-fi
+bootloader
 username
 user_password
 root_password

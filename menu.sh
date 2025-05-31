@@ -6,7 +6,7 @@ export ROOT_PASSWORD=""
 export USER_PASSWORD=""
 export KERNEL=3 # This is actually linux-lts since it modified in the kernel menu
 export KERNEL_OPTIONS=(linux linux-lts linux-zen)
-export BOOTLOADER=1
+export BOOTLOADER=2
 
 export EFI_PARTITION=""
 export ROOT_PARTITION=""
@@ -20,9 +20,8 @@ timezone() {
 	# TODO
 	# Add validation
 	info "Timezone format are Continent/City"
-	info "e.g., Asia/Jakarta"
 	info "Default, $TIMEZONE"
-	local timezone=$(input "Enter yur timezone")
+	local timezone=$(tzselect)
 
 	if [[ -n "$timezone" ]]; then
 		TIMEZONE=$timezone
@@ -42,29 +41,34 @@ hostname() {
 	clear
 }
 
-username() {
-	USERNAME=$(input_noempty "Enter your username")
+kernel() {
+	info "Default, ${KERNEL_OPTIONS[(($KERNEL - 1))]}"
+	local kernel="$(option "Select kernel" "${KERNEL_OPTIONS[@]}")"
+
+	if [[ -n "$kernel" ]]; then
+		KERNEL=$kernel
+	fi
+
+	KERNEL=$(("$KERNEL" - 1))
+
+	echo "$KERNEL"
+
 	clear
 }
 
-root_password() {
-	info "Empty password will disable root user"
-	ROOT_PASSWORD=$(input_silent "Enter your Root password")
+bootloader() {
+	info "Default, Systemd-boot"
+	local bootloader=$(option "Select the bootloader" "GRUB" "Systemd-boot")
 
-	if [[ -z "$ROOT_PASSWORD" ]]; then
-		clear
-		return 0
+	if [[ -n "$bootloader" ]]; then
+		BOOTLOADER=$bootloader
 	fi
 
-	echo -e
-	local password_verification=$(input_silent "Verify your root password")
+	clear
+}
 
-	if [[ "$ROOT_PASSWORD" != "$password_verification" ]]; then
-		clear
-		warn "Password doesn't match, try again"
-		root_password
-	fi
-
+username() {
+	USERNAME=$(input_noempty "Enter your username")
 	clear
 }
 
@@ -87,6 +91,27 @@ user_password() {
 		warn "Password doesn't match,"
 		user_password
 		return 0
+	fi
+
+	clear
+}
+
+root_password() {
+	info "Empty password will disable root user"
+	ROOT_PASSWORD=$(input_silent "Enter your Root password")
+
+	if [[ -z "$ROOT_PASSWORD" ]]; then
+		clear
+		return 0
+	fi
+
+	echo -e
+	local password_verification=$(input_silent "Verify your root password")
+
+	if [[ "$ROOT_PASSWORD" != "$password_verification" ]]; then
+		clear
+		warn "Password doesn't match, try again"
+		root_password
 	fi
 
 	clear
@@ -171,25 +196,33 @@ root_partition() {
 	clear
 }
 
-swap_method() {
-	info "This option is optional"
-	info "Zram only support GRUB as bootloader"
-	SWAP_METHOD=$(option "Choose swap method" "Swap" "Zram")
-	clear
-}
+swap() {
+	# Show this option only if bootloader is a GRUB
+	if [[ $BOOTLOADER -eq 1 ]]; then
+		info "This option is optional"
+		info "Zram only support GRUB as bootloader"
+		info "Empty this option to skip swap"
+		SWAP_METHOD=$(option "Choose swap method" "Swap" "Zram")
+	fi
 
-swap_partition() {
+	clear
+
+	# Do not show swap partition if skipping swap or Zram swap
+	if [[ $SWAP_METHOD -lt 1 ]] || [[ $SWAP_METHOD -gt 1 ]]; then
+		return 0
+	fi
+
 	local partition
 
 	list_disk
 	echo -e
 	info "Type the full path e.g., /dev/nvme0n1p4"
 	info "To us swap file type '/swapfile' to the input"
-	info "To cancel this option type 'n' to the input"
+	info "Empty this option to skip swap"
 	partition=$(input "Select your SWAP partition")
 
-	if [[ "$partition" == "n" ]]; then
-		SWAP_METHOD=""
+	if [[ -z "$partition" ]]; then
+		SWAP_METHOD=0
 		return 0
 	fi
 
@@ -242,38 +275,6 @@ swap_partition() {
 	clear
 }
 
-swap() {
-	if [[ "$SWAP_METHOD" -eq "1" ]]; then
-		swap_partition
-	fi
-}
-
-kernel() {
-	info "Default, ${KERNEL_OPTIONS[(($KERNEL - 1))]}"
-	local kernel="$(option "Select kernel" "${KERNEL_OPTIONS[@]}")"
-
-	if [[ -n "$kernel" ]]; then
-		KERNEL=$kernel
-	fi
-
-	KERNEL=$(("$KERNEL" - 1))
-
-	echo "$KERNEL"
-
-	clear
-}
-
-bootloader() {
-	info "Default, grub"
-	local bootloader=$(option "Select the bootloader" "Grub" "Systemd-boot")
-
-	if [[ -n "$bootloader" ]]; then
-		BOOTLOADER=$bootloader
-	fi
-
-	clear
-}
-
 summary() {
 	print_color "$MAGENTA" "Summary: "
 	echo -e
@@ -315,6 +316,9 @@ summary() {
 	echo -e
 
 	print_color "$GREEN" "Swap Method: "
+	if [[ "$SWAP_METHOD" -eq "0" ]]; then
+		print_color "$WHITE" "Disabled"
+	fi
 	if [[ "$SWAP_METHOD" -eq "1" ]]; then
 		print_color "$WHITE" "Swap"
 	fi

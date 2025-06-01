@@ -211,11 +211,11 @@ swap() {
 
 	# Do not show swap partition if skipping swap or Zram swap
 	if [[ -z $SWAP_METHOD ]]; then
-    return 0
- fi
+        return 0
+    fi
 
- if [[ $SWAP_METHOD -gt 1 ]]; then
-		  return 0
+    if [[ $SWAP_METHOD -gt 1 ]]; then
+		return 0
 	fi
 
 	local partition

@@ -210,8 +210,12 @@ swap() {
 	clear
 
 	# Do not show swap partition if skipping swap or Zram swap
-	if [[ $SWAP_METHOD -lt 1 ]] || [[ $SWAP_METHOD -gt 1 ]]; then
-		return 0
+	if [[ -z $SWAP_METHOD ]]; then
+    return 0
+ fi
+
+ if [[ $SWAP_METHOD -gt 1 ]]; then
+		  return 0
 	fi
 
 	local partition

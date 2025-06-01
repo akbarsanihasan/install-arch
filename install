@@ -38,9 +38,9 @@ timezone
 hostname
 kernel
 bootloader
+root_password
 username
 user_password
-root_password
 efi_partition
 root_partition
 swap

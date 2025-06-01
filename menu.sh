@@ -4,7 +4,7 @@ export HOST_NAME=$(hostnamectl | awk '/Hardware Model/{print $3}')
 export USERNAME=""
 export ROOT_PASSWORD=""
 export USER_PASSWORD=""
-export KERNEL=3 # This is actually linux-lts since it modified in the kernel menu
+export KERNEL=3
 export KERNEL_OPTIONS=(linux linux-lts linux-zen)
 export BOOTLOADER=2
 
@@ -205,20 +205,18 @@ swap() {
 		info "Zram only support GRUB as bootloader"
 		info "Empty this option to skip swap"
 		SWAP_METHOD=$(option "Choose swap method" "Swap" "Zram")
+		clear
 	fi
-
-	clear
-
-	# Do not show swap partition if skipping swap or Zram swap
 	if [[ -z $SWAP_METHOD ]]; then
-        return 0
-    fi
-
-    if [[ $SWAP_METHOD -gt 1 ]]; then
+		return 0
+	fi
+	if [[ $SWAP_METHOD -gt 1 ]]; then
 		return 0
 	fi
 
 	local partition
+
+	SWAP_METHOD=1
 
 	list_disk
 	echo -e

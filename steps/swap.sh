@@ -46,12 +46,12 @@ enable_zram() {
 }
 
 setting_swap() {
-	if [[ $SWAP_METHOD == "1" ]]; then
+	if [[ $SWAP_METHOD == 1 ]]; then
 		enable_swap
 		return 0
 	fi
 
-	if [[ $SWAP_METHOD == "2" ]]; then
+	if [[ $SWAP_METHOD == 2 ]]; then
 		enable_zram
 		return 0
 	fi

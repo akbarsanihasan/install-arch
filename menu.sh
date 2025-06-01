@@ -16,6 +16,8 @@ export SWAP_PARTITION=""
 
 export CONFIRM_INSTALL=""
 
+clear
+
 timezone() {
 	# TODO
 	# Add validation

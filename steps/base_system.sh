@@ -3,38 +3,36 @@ base_system() {
     info "Installing base systems"
     sleep 3
 
-    local base=(base sudo linux-firmware zsh)
-    local network=(networkmanager wpa_supplicant wireless_tools)
-    local pacman_util=(reflector pacman-contrib)
-    kernel=("${KERNEL_OPTIONS[$KERNEL]}")
-
-    swap_util=()
+    local packages=(
+        base
+        sudo
+        linux-firmware
+        networkmanager
+        wpa_supplicant
+        wireless_tools
+        reflector
+        pacman-contrib
+        efibootmgr
+        dosfstools
+        mtools
+        "${KERNEL_OPTIONS[$KERNEL]}"
+    )
     if [[ "$SWAP_METHOD" == "2" ]]; then
-        swap_util=(zram-generator)
+        packages+=(zram-generator)
     fi
 
-    bootloader=(efibootmgr dosfstools mtools)
     if [[ $BOOTLOADER == "1" ]]; then
-        bootloader+=(grub os-prober)
+        packages+=(grub os-prober)
     fi
 
-    microcode=()
     if [[ "$CPU_VENDOR" == "GenuineIntel" ]]; then
-        microcode=(intel-ucode)
+        packages+=(intel-ucode)
     fi
     if [[ "$CPU_VENDOR" == "AuthenticAMD" ]]; then
-        microcode=(amd-ucode)
+        packages+=(amd-ucode)
     fi
 
-    pacstrap "$ROOT_MOUNTPOINT" \
-        "${base[@]}" \
-        "${kernel[@]}" \
-        "${bootloader[@]}" \
-        "${network[@]}" \
-        "${microcode[@]}" \
-        "${swap_util[@]}" \
-        "${pacman_util[@]}"
-
+    pacstrap "$ROOT_MOUNTPOINT" "$packages"
     success "Installing package to root partition"
     sleep 3
 }

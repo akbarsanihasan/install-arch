@@ -1,12 +1,12 @@
 setting_mirror() {
 	echo -e
 	info "Configuring pacman and reflector"
-
+        pacman -S --noconfirm reflector
 	if [[ ! -e /etc/pacman.d/mirrorlist.bak ]]; then
 		cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 	fi
 
-	reflector --verbose --score 32 \
+	reflector --verbose --latest 5 \
 		--protocol https --sort rate \
 		--save /etc/pacman.d/mirrorlist
 

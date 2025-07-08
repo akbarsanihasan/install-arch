@@ -32,7 +32,7 @@ base_system() {
         packages+=(amd-ucode)
     fi
 
-    pacstrap "$ROOT_MOUNTPOINT" "$packages"
+    pacstrap "$ROOT_MOUNTPOINT" "${packages[@]}"
     success "Installing package to root partition"
     sleep 3
 }

@@ -115,7 +115,7 @@ ESP_MOUNTPOINT="$ROOT_MOUNTPOINT/boot"
 DEFAULT_TIMEZONE="Asia/Jakarta"
 : "${timezone:=$DEFAULT_TIMEZONE}"
 
-DEFAULT_HOST=$(cat < /sys/class/dmi/id/product_version | cut -d ' ' -f 1 | tr -d "[:punct:][:space:]")
+DEFAULT_HOST=$(cat < /sys/class/dmi/id/product_version | cut -d ' ' -f 1 | tr -d "[:punct:][:space:]" | tr "[:upper:]" "[:lower:]")
 : "${hostname:=${DEFAULT_HOST^}}"
 
 DEFAULT_USERNAME="akbarsanihasan"

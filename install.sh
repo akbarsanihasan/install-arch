@@ -216,7 +216,6 @@ reflector --verbose \
   --age 48 \
   --latest 20 \
   --fastest 5 \
-  --country ID \
   --protocol https \
   --sort rate \
   --save /etc/pacman.d/mirrorlist

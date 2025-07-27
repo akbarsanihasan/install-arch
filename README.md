@@ -1,1 +1,1 @@
-#### Pure bash personal archlinux installation scripts
+Pure bash personal archlinux installation scripts

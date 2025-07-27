@@ -415,7 +415,7 @@ arch-chroot "$ROOT_MOUNTPOINT" grub-mkconfig -o /boot/grub/grub.cfg
 success "Installing bootloader"
 sleep 3
 
-genfstab -U $ROOT_MOUNTPOINT
+genfstab -U "$ROOT_MOUNTPOINT" >> "$ROOT_MOUNTPOINT"/etc/fstab
 
 clear
 success "Installing arch"

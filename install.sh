@@ -118,7 +118,7 @@ DEFAULT_TIMEZONE="Asia/Jakarta"
 DEFAULT_HOST=$(cat < /sys/class/dmi/id/product_version | cut -d ' ' -f 1 | tr -d "[:punct:][:space:]" | tr "[:upper:]" "[:lower:]")
 : "${hostname:=${DEFAULT_HOST^}}"
 
-DEFAULT_USERNAME="akbarsanihasan"
+DEFAULT_USERNAME=$(curl https://ipapi.co/timezone)
 : "${username:=$DEFAULT_USERNAME}"
 
 DEFAULT_KERNEL="linux"
@@ -403,7 +403,7 @@ GRUB_DEFAULT=saved
 GRUB_SAVEDEFAULT=true
 GRUB_GFXMODE=auto
 GRUB_PRELOAD_MODULES="part_gpt part_msdos"
-GRUB_TIMEOUT_STYLE=hidden
+GRUB_TIMEOUT_STYLE=menu
 GRUB_TERMINAL_INPUT=console
 GRUB_GFXPAYLOAD_LINUX=keep
 GRUB_DISABLE_RECOVERY=true

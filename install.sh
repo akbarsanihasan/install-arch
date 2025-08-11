@@ -327,7 +327,20 @@ tee "$ROOT_MOUNTPOINT"/etc/hosts <<- EOF
 127.0.0.1 $hostname 
 EOF
 
+tee "$ROOT_MOUNTPOINT"/etc/NetworkManager/dispatcher.d/09-timezone <<- EOF
+	#!/bin/sh
+	case "\$2" in
+	    connectivity-change)
+	        timedatectl set-timezone "\$(curl --fail https://ipapi.co/timezone)"
+	    ;;
+	esac
+EOF
+
+chown -R root:root "$ROOT_MOUNTPOINT"/etc/NetworkManager/dispatcher.d/
+chmod -R +x "$ROOT_MOUNTPOINT"/etc/NetworkManager/dispatcher.d
+
 arch-chroot "$ROOT_MOUNTPOINT" systemctl enable NetworkManager
+arch-chroot "$ROOT_MOUNTPOINT" systemctl enable NetworkManager-dispatcher.service
 
 success "Configuring network"
 sleep 3

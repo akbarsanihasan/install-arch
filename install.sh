@@ -112,13 +112,13 @@ fi
 ROOT_MOUNTPOINT="/mnt"
 ESP_MOUNTPOINT="$ROOT_MOUNTPOINT/boot"
 
-DEFAULT_TIMEZONE="Asia/Jakarta"
+DEFAULT_TIMEZONE=$(curl https://ipapi.co/timezone)
 : "${timezone:=$DEFAULT_TIMEZONE}"
 
-DEFAULT_HOST=$(cat < /sys/class/dmi/id/product_version | cut -d ' ' -f 1 | tr -d "[:punct:][:space:]" | tr "[:upper:]" "[:lower:]")
+DEFAULT_HOST="archlinux"
 : "${hostname:=${DEFAULT_HOST^}}"
 
-DEFAULT_USERNAME=$(curl https://ipapi.co/timezone)
+DEFAULT_USERNAME="akbarsanihasan"
 : "${username:=$DEFAULT_USERNAME}"
 
 DEFAULT_KERNEL="linux"

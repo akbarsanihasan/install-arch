@@ -213,9 +213,10 @@ if [[ ! -e /etc/pacman.d/mirrorlist.bak ]]; then
 fi
 
 reflector --verbose \
-  --age 48 \
   --latest 20 \
-  --fastest 5 \
+  --age 12 \
+  --fastest 8 \
+  --country us,id,sg \
   --protocol https \
   --sort rate \
   --save /etc/pacman.d/mirrorlist

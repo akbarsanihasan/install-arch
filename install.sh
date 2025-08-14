@@ -116,7 +116,7 @@ DEFAULT_TIMEZONE=$(curl https://ipapi.co/timezone)
 : "${timezone:=$DEFAULT_TIMEZONE}"
 
 DEFAULT_HOST="archlinux"
-: "${hostname:=${DEFAULT_HOST^}}"
+: "${hostname:=$DEFAULT_HOST}"
 
 DEFAULT_USERNAME="akbarsanihasan"
 : "${username:=$DEFAULT_USERNAME}"

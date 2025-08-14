@@ -214,7 +214,6 @@ fi
 
 reflector --verbose \
   --latest 20 \
-  --age 12 \
   --fastest 8 \
   --country us,id,sg \
   --protocol https \

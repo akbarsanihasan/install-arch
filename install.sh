@@ -213,10 +213,11 @@ if [[ ! -e /etc/pacman.d/mirrorlist.bak ]]; then
 fi
 
 reflector --verbose \
-  --age 12\
-  --score 20 \
+  --age 12 \
+  --latest 20 \
+  --number 20 \
+  --country ID \
   --protocol https \
-  --sort score \
   --save /etc/pacman.d/mirrorlist
 
 if [[ ! -e /etc/pacman.conf.bak ]]; then

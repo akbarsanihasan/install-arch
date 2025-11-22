@@ -18,6 +18,7 @@ if ! [[ -d /sys/firmware/efi ]]; then
 fi
 
 input_password() {
+  clear
   local password=$(input_noempty_silent "Input password")
   echo -e >&2
   local password_verify=$(input_noempty_silent "Verify password")
